@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CrossKnowledge - Code challenge</title>
+</head>
+<body>
+  <script>
+    // This will create elements for testing, DO NOT change this code
+    (() => {
+      const MS_PER_MINUTE = 60000
+      const NOW = new Date()
+      let minutes = [0, 1, 30, 60, 6 * 60, 23 * 60, 24 * 60]
+      let dates = []
+
+      minutes.forEach((i) => dates.push(new Date(NOW - i * MS_PER_MINUTE)))
+
+      dates.forEach((item) => {
+        let el = document.createElement("div")
+        el.innerHTML = "Started "
+
+        let dt = document.createElement('span')
+        dt.className = 'js-date-format'
+        dt.innerHTML = item.toISOString()
+        el.appendChild(dt)
+        document.body.appendChild(el)
+      })
+    })();
+
+    const start_dates = [];
+    const elements = document.querySelectorAll('.js-date-format');
+
+    function loadDatesArray () {
+        elements.forEach(el => start_dates.push(new Date(el.innerHTML).getTime()))
+    }
+
+    function renderDates (elapsed_array) {
+      elements.forEach((el, key) => el.innerHTML = elapsed_array[key]);
+    }
+
+    function updateElipsedTime () {
+       const elapsed_array = start_dates.map( (date, idx) => {
+           
+            let intervalInSeconds = Math.floor((new Date() - date) / 1000);
+
+            if(idx == (start_dates.length - 1)) return new Date(date).toISOString();
+
+            if(intervalInSeconds <= 59) {
+                return intervalInSeconds == 1 ? '1 second ago' : intervalInSeconds + ' seconds ago';
+            }
+
+            if(intervalInSeconds > 59 && intervalInSeconds < 3600) {
+                return Math.floor(intervalInSeconds / 60) == 1 ? '1 minute ago' : Math.floor(intervalInSeconds / 60) + ' minutes ago';
+            }
+
+            return Math.floor(intervalInSeconds / 3600) == 1 ? '1 hour ago' : Math.floor(intervalInSeconds / 3600) + ' hours ago';
+      });
+
+      renderDates(elapsed_array);
+    }
+
+
+    loadDatesArray();
+    setInterval(updateElipsedTime, 1000);
+
+
+  </script>
+</body>
+</html>
